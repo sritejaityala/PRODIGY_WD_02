@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .stopwatch-container {
+            text-align: center;
+        }
+
+        #display {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        #buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        #lapList {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        #lapList li {
+            margin-bottom: 5px;
+        }
+    </style>
+    <title>Stopwatch</title>
+</head>
+<body>
+    <div class="stopwatch-container">
+        <div id="display">00:00:00</div>
+        <div id="buttons">
+            <button onclick="startStopwatch()">Start</button>
+            <button onclick="stopStopwatch()">Stop</button>
+            <button onclick="resetStopwatch()">Reset</button>
+            <button onclick="recordLap()">Lap</button>
+        </div>
+        <ul id="lapList"></ul>
+    </div>
+    <script>
+        let timer;
+        let isRunning = false;
+        let seconds = 0;
+        let minutes = 0;
+        let hours = 0;
+        let lapCounter = 1;
+
+        function startStopwatch() {
+            if (!isRunning) {
+                isRunning = true;
+                timer = setInterval(updateDisplay, 1000);
+            }
+        }
+
+        function stopStopwatch() {
+            if (isRunning) {
+                isRunning = false;
+                clearInterval(timer);
+            }
+        }
+
+        function resetStopwatch() {
+            stopStopwatch();
+            seconds = 0;
+            minutes = 0;
+            hours = 0;
+            lapCounter = 0;
+            updateDisplay();
+            clearLapList();
+        }
+
+        function recordLap() {
+            if (isRunning) {
+                const lapTime = formatTime(hours) + ':' + formatTime(minutes) + ':' + formatTime(seconds);
+                const lapList = document.getElementById('lapList');
+                const lapItem = document.createElement('li');
+                lapItem.textContent = `Lap ${lapCounter++}: ${lapTime}`;
+                lapList.appendChild(lapItem);
+            }
+        }
+
+        function updateDisplay() {
+            seconds++;
+            if (seconds === 60) {
+                seconds = 0;
+                minutes++;
+                if (minutes === 60) {
+                    minutes = 0;
+                    hours++;
+                }
+            }
+
+            const display = document.getElementById('display');
+            display.textContent = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+        }
+
+        function formatTime(time) {
+            return time < 10 ? `0${time}` : time;
+        }
+
+        function clearLapList() {
+            const lapList = document.getElementById('lapList');
+            lapList.innerHTML = '';
+        }
+    </script>
+</body>
+</html>
